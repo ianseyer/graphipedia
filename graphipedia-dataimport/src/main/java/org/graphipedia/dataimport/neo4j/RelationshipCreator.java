@@ -55,14 +55,14 @@ public class RelationshipCreator extends SimpleStaxParser {
     @Override
     protected void handleElement(String element, String value) {
         if ("t".equals(element)) {
-            nodeId = findNodeId(value);
+        	nodeId = findNodeId(value);
         } else if ("l".equals(element)) {
             createRelationship(nodeId, value);
         }
     }
 
-    private void createRelationship(long nodeId, String link) {
-        Long linkNodeId = findNodeId(link);
+    private void createRelationship(long nodeId, String targetNodeTitle) {
+        Long linkNodeId = findNodeId(targetNodeTitle);
         if (linkNodeId != null) {
             inserter.createRelationship(nodeId, linkNodeId, WikiRelationship.Link, null);
             linkCounter.increment();
