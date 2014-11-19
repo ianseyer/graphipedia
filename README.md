@@ -3,6 +3,20 @@ Graphipedia
 
 A tool for creating a graph database of Wikipedia pages and the links between them.
 
+What's new
+--------------
+
+The tool has been modified from the base version to:
+
+1. Extract and import the Wikipedia categories and the links between them (in addition to the nodes and
+the links).
+
+2. Add a property "lang" to each node, which specifies the ISO 639-1 code of the Wikipedia language 
+from which the node has been extracted.
+
+3. Add cross-language links between nodes that represent equivalent pages in two different languages (e.g. the page titled "Paris" in the English Wikipedia and the page titled "Parigi" in the Italian Wikipedia).
+
+
 Importing Data
 --------------
 
