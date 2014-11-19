@@ -57,7 +57,7 @@ public class LinkExtractor extends SimpleStaxParser {
         if ("page".equals(element)) {
             if (!title.contains(":") || title.startsWith("Category:")) {
                 try {
-                    writePage(title, text);
+                    writePage(title, id, text);
                 } catch (XMLStreamException streamException) {
                     throw new RuntimeException(streamException);
                 }
@@ -78,11 +78,15 @@ public class LinkExtractor extends SimpleStaxParser {
         }
     }
 
-    private void writePage(String title, String text) throws XMLStreamException {
+    private void writePage(String title, String id, String text) throws XMLStreamException {
         writer.writeStartElement("p");
         
         writer.writeStartElement("t");
         writer.writeCharacters(title);
+        writer.writeEndElement();
+        
+        writer.writeStartElement("i");
+        writer.writeCharacters(id);
         writer.writeEndElement();
         
         Set<String> links = parseLinks(text);
