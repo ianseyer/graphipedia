@@ -39,10 +39,13 @@ public class LinkExtractor extends SimpleStaxParser {
 
     private String title;
     private String text;
+    private String id;
+    private boolean extractId;
 
     public LinkExtractor(XMLStreamWriter writer) {
-        super(Arrays.asList("page", "title", "text"));
+        super(Arrays.asList("page", "title", "text", "id"));
         this.writer = writer;
+        this.extractId = true;
     }
 
     public int getPageCount() {
@@ -61,10 +64,17 @@ public class LinkExtractor extends SimpleStaxParser {
             }
             title = null;
             text = null;
+            id = null;
+            extractId = true;
         } else if ("title".equals(element)) {
             title = value;
         } else if ("text".equals(element)) {
             text = value;
+        } else if ("id".equals(element)) {
+        	if (extractId) {
+        		id = value;
+        		extractId = false;
+        	}
         }
     }
 
