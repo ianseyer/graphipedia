@@ -51,6 +51,14 @@ public class NodeCreator extends SimpleStaxParser {
     public int getPageCount() {
         return pageCounter.getCount();
     }
+    
+    public int getNumberOfPages() {
+    	return numberOfPages;
+    }
+    
+    public int getNumberOfCategories () {
+    	return numberOfCategories;
+    }
 
     @Override
     protected void handleElement(String element, String value) {

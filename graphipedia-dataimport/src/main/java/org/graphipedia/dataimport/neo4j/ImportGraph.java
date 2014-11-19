@@ -59,7 +59,8 @@ public class ImportGraph {
         long startTime = System.currentTimeMillis();
         nodeCreator.parse(fileName);
         long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
-        System.out.printf("\n%d pages imported in %d seconds.\n", nodeCreator.getPageCount(), elapsedSeconds);
+        System.out.printf("\n%d pages and %d categories imported in %d seconds.\n", nodeCreator.getNumberOfPages(), 
+        		nodeCreator.getNumberOfCategories(), elapsedSeconds);
     }
 
     public void createRelationships(String fileName) throws Exception {
