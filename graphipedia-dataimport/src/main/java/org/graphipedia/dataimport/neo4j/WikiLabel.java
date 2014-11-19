@@ -23,4 +23,4 @@ package org.graphipedia.dataimport.neo4j;
 
 import org.neo4j.graphdb.Label;
 
-public enum WikiLabel implements Label { Page }
+public enum WikiLabel implements Label { Page, Category }

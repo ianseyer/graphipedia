@@ -33,13 +33,19 @@ public class NodeCreator extends SimpleStaxParser {
 
     private final BatchInserter inserter;
     private final Map<String, Long> inMemoryIndex;
+    private final String langCode;
 
     private final ProgressCounter pageCounter = new ProgressCounter();
+    private int numberOfCategories;
+    private int numberOfPages; 
 
-    public NodeCreator(BatchInserter inserter, Map<String, Long> inMemoryIndex) {
+    public NodeCreator(BatchInserter inserter, Map<String, Long> inMemoryIndex, String langCode) {
         super(Arrays.asList("t"));
         this.inserter = inserter;
         this.inMemoryIndex = inMemoryIndex;
+        this.langCode = langCode;
+        this.numberOfCategories = 0;
+        this.numberOfPages = 0;
     }
 
     public int getPageCount() {
@@ -54,8 +60,18 @@ public class NodeCreator extends SimpleStaxParser {
     }
 
     private void createNode(String title) {
-        Map<String, Object> properties = MapUtil.map("title", title);
-        long nodeId = inserter.createNode(properties, WikiLabel.Page);
+        Map<String, Object> properties = MapUtil.map("title", title, "lang", langCode);
+        boolean isCategory = title.startsWith("Category:");
+        WikiLabel label = null;
+        if (isCategory) {
+        	numberOfCategories += 1;
+        	label = WikiLabel.Category;
+        }
+        else {
+        	numberOfPages += 1;
+        	label = WikiLabel.Page;
+        }
+        long nodeId = inserter.createNode(properties, label);
         inMemoryIndex.put(title, nodeId);
         pageCounter.increment();
     }

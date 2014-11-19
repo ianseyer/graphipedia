@@ -35,25 +35,27 @@ public class ImportGraph {
     public ImportGraph(String dataDir) {
         inserter = BatchInserters.inserter(dataDir);
         inserter.createDeferredSchemaIndex(WikiLabel.Page).on("title").create();
+        inserter.createDeferredSchemaIndex(WikiLabel.Category).on("title").create();
         inMemoryIndex = new HashMap<String, Long>();
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
-            System.out.println("USAGE: ImportGraph <input-file> <data-dir>");
+        if (args.length < 3) {
+            System.out.println("USAGE: ImportGraph <input-file> <data-dir> <lang-code>");
             System.exit(255);
         }
         String inputFile = args[0];
         String dataDir = args[1];
+        String langCode = args[2];
         ImportGraph importer = new ImportGraph(dataDir);
-        importer.createNodes(inputFile);
+        importer.createNodes(inputFile, langCode);
         importer.createRelationships(inputFile);
         importer.finish();
     }
 
-    public void createNodes(String fileName) throws Exception {
+    public void createNodes(String fileName, String langCode) throws Exception {
         System.out.println("Importing pages...");
-        NodeCreator nodeCreator = new NodeCreator(inserter, inMemoryIndex);
+        NodeCreator nodeCreator = new NodeCreator(inserter, inMemoryIndex, langCode);
         long startTime = System.currentTimeMillis();
         nodeCreator.parse(fileName);
         long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
