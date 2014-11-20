@@ -29,52 +29,55 @@ import org.neo4j.unsafe.batchinsert.BatchInserters;
 
 public class ImportGraph {
 
-    private final BatchInserter inserter;
-    private final Map<String, Long> inMemoryIndex;
+	private final BatchInserter inserter;
+	private final Map<String, Long> inMemoryIndex;
 
-    public ImportGraph(String dataDir) {
-        inserter = BatchInserters.inserter(dataDir);
-        inserter.createDeferredSchemaIndex(WikiLabel.Page).on("title").create();
-        inserter.createDeferredSchemaIndex(WikiLabel.Category).on("title").create();
-        inMemoryIndex = new HashMap<String, Long>();
-    }
+	public ImportGraph(String dataDir, boolean append) {
+		inserter = BatchInserters.inserter(dataDir);
+		if( !append ) {
+			inserter.createDeferredSchemaIndex(WikiLabel.Page).on("title").create();
+			inserter.createDeferredSchemaIndex(WikiLabel.Category).on("title").create();
+		}
+		inMemoryIndex = new HashMap<String, Long>();
+	}
 
-    public static void main(String[] args) throws Exception {
-        if (args.length < 3) {
-            System.out.println("USAGE: ImportGraph <input-file> <data-dir> <lang-code>");
-            System.exit(255);
-        }
-        String inputFile = args[0];
-        String dataDir = args[1];
-        String langCode = args[2];
-        ImportGraph importer = new ImportGraph(dataDir);
-        importer.createNodes(inputFile, langCode);
-        importer.createRelationships(inputFile);
-        importer.finish();
-    }
+	public static void main(String[] args) throws Exception {
+		if (args.length < 4) {
+			System.out.println("USAGE: ImportGraph <input-file> <data-dir> <lang-code> <append>");
+			System.exit(255);
+		}
+		String inputFile = args[0];
+		String dataDir = args[1];
+		String langCode = args[2];
+		boolean append = Boolean.parseBoolean(args[3]);
+		ImportGraph importer = new ImportGraph(dataDir, append);
+		importer.createNodes(inputFile, langCode);
+		importer.createRelationships(inputFile);
+		importer.finish();
+	}
 
-    public void createNodes(String fileName, String langCode) throws Exception {
-        System.out.println("Importing pages...");
-        NodeCreator nodeCreator = new NodeCreator(inserter, inMemoryIndex, langCode);
-        long startTime = System.currentTimeMillis();
-        nodeCreator.parse(fileName);
-        long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
-        System.out.printf("\n%d pages and %d categories imported in %d seconds.\n", nodeCreator.getNumberOfPages(), 
-        		nodeCreator.getNumberOfCategories(), elapsedSeconds);
-    }
+	public void createNodes(String fileName, String langCode) throws Exception {
+		System.out.println("Importing pages...");
+		NodeCreator nodeCreator = new NodeCreator(inserter, inMemoryIndex, langCode);
+		long startTime = System.currentTimeMillis();
+		nodeCreator.parse(fileName);
+		long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+		System.out.printf("\n%d pages and %d categories imported in %d seconds.\n", nodeCreator.getNumberOfPages(), 
+				nodeCreator.getNumberOfCategories(), elapsedSeconds);
+	}
 
-    public void createRelationships(String fileName) throws Exception {
-        System.out.println("Importing links...");
-        RelationshipCreator relationshipCreator = new RelationshipCreator(inserter, inMemoryIndex);
-        long startTime = System.currentTimeMillis();
-        relationshipCreator.parse(fileName);
-        long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
-        System.out.printf("\n%d links imported in %d seconds; %d broken links ignored\n",
-                relationshipCreator.getLinkCount(), elapsedSeconds, relationshipCreator.getBadLinkCount());
-    }
+	public void createRelationships(String fileName) throws Exception {
+		System.out.println("Importing links...");
+		RelationshipCreator relationshipCreator = new RelationshipCreator(inserter, inMemoryIndex);
+		long startTime = System.currentTimeMillis();
+		relationshipCreator.parse(fileName);
+		long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+		System.out.printf("\n%d links imported in %d seconds; %d broken links ignored\n",
+				relationshipCreator.getLinkCount(), elapsedSeconds, relationshipCreator.getBadLinkCount());
+	}
 
-    public void finish() {
-        inserter.shutdown();
-    }
+	public void finish() {
+		inserter.shutdown();
+	}
 
 }
