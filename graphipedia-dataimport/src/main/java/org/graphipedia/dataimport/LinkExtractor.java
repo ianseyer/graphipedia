@@ -111,7 +111,7 @@ public class LinkExtractor extends SimpleStaxParser {
                 String link = matcher.group(1);
                 if (!link.contains(":") || link.startsWith("Category:")) {
                     if (link.contains("|")) {
-                        link = link.substring(link.lastIndexOf('|') + 1);
+                        link = link.substring(0, link.lastIndexOf('|'));
                     }
                     links.add(link);
                 }
