@@ -22,7 +22,9 @@
 package org.graphipedia.dataimport;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,11 +32,14 @@ import java.util.regex.Pattern;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.neo4j.helpers.collection.MapUtil;
+
 public class LinkExtractor extends SimpleStaxParser {
 
     private static final Pattern LINK_PATTERN = Pattern.compile("\\[\\[(.+?)\\]\\]");
-
+    
     private final XMLStreamWriter writer;
+    private final String lang;
     private final ProgressCounter pageCounter = new ProgressCounter();
 
     private String title;
@@ -42,9 +47,10 @@ public class LinkExtractor extends SimpleStaxParser {
     private String id;
     private boolean extractId;
 
-    public LinkExtractor(XMLStreamWriter writer) {
+    public LinkExtractor(XMLStreamWriter writer, String lang) {
         super(Arrays.asList("page", "title", "text", "id"));
         this.writer = writer;
+        this.lang = lang;
         this.extractId = true;
     }
 
@@ -55,7 +61,7 @@ public class LinkExtractor extends SimpleStaxParser {
     @Override
     protected void handleElement(String element, String value) {
         if ("page".equals(element)) {
-            if (!title.contains(":") || title.startsWith("Category:")) {
+            if (!title.contains(":") || title.startsWith(WikipediaNamespace.getCategoryName(lang)+":")) {
                 try {
                     writePage(title, id, text);
                 } catch (XMLStreamException streamException) {
@@ -109,7 +115,7 @@ public class LinkExtractor extends SimpleStaxParser {
             Matcher matcher = LINK_PATTERN.matcher(text);
             while (matcher.find()) {
                 String link = matcher.group(1);
-                if (!link.contains(":") || link.startsWith("Category:")) {
+                if (!link.contains(":") || link.startsWith(WikipediaNamespace.getCategoryName(lang)+":")) {
                     if (link.contains("|")) {
                         link = link.substring(0, link.lastIndexOf('|'));
                     }

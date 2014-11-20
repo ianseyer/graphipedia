@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.graphipedia.dataimport.ProgressCounter;
 import org.graphipedia.dataimport.SimpleStaxParser;
+import org.graphipedia.dataimport.WikipediaNamespace;
 import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 
@@ -81,7 +82,7 @@ public class NodeCreator extends SimpleStaxParser {
 
     private void createNode(String title, String wikiId) {
         Map<String, Object> properties = MapUtil.map("wiki-id", wikiId, "title", title, "lang", langCode);
-        boolean isCategory = title.startsWith("Category:");
+        boolean isCategory = title.startsWith(WikipediaNamespace.getCategoryName(langCode)+":");
         WikiLabel label = null;
         if (isCategory) {
         	numberOfCategories += 1;

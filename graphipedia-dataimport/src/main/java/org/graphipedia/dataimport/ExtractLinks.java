@@ -36,15 +36,15 @@ import org.codehaus.stax2.XMLOutputFactory2;
 public class ExtractLinks {
 
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
-            System.out.println("USAGE: ExtractLinks <input-file> <output-file>");
+        if (args.length < 3) {
+            System.out.println("USAGE: ExtractLinks <input-file> <output-file> <lang>");
             System.exit(255);
         }
         ExtractLinks self = new ExtractLinks();
-        self.extract(args[0], args[1]);
+        self.extract(args[0], args[1], args[2]);
     }
 
-    private void extract(String inputFile, String outputFile) throws IOException, XMLStreamException {
+    private void extract(String inputFile, String outputFile, String lang) throws IOException, XMLStreamException {
         System.out.println("Parsing pages and extracting links...");
         
         long startTime = System.currentTimeMillis();
@@ -54,7 +54,7 @@ public class ExtractLinks {
         writer.writeStartDocument();
         writer.writeStartElement("d");
         
-        LinkExtractor linkExtractor = new LinkExtractor(writer);
+        LinkExtractor linkExtractor = new LinkExtractor(writer, lang);
         linkExtractor.parse(inputFile);
 
         writer.writeEndElement();
