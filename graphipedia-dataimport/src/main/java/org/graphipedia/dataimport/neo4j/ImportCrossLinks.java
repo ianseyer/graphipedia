@@ -10,13 +10,12 @@ import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
 
 public class ImportCrossLinks {
 
-	private final BatchInserter inserter;
+	private BatchInserter inserter;
 	private Map<String, Long> sourceIndex;
 	private Map<String,Long> targetIndex;
 	private String inputFile;
@@ -25,7 +24,7 @@ public class ImportCrossLinks {
 	private String targetLang;
 
 	public ImportCrossLinks(String inputFile, String neo4jdb, String sourceLang, String targetLang) {
-		inserter = BatchInserters.inserter(neo4jdb);
+		
 		sourceIndex = new HashMap<String, Long>();
 		targetIndex = new HashMap<String, Long>();
 		this.inputFile = inputFile;
@@ -53,45 +52,41 @@ public class ImportCrossLinks {
 		}
 		System.out.println("Done!");
 		graphDb.shutdown();
+		inserter = BatchInserters.inserter(neo4jdb);
 		CrossLinkCreator relationshipCreator = new CrossLinkCreator(inserter, sourceIndex, targetIndex);
-        long startTime = System.currentTimeMillis();
-        relationshipCreator.parse(inputFile);
-        long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
-        System.out.printf("\n%d links imported in %d seconds; %d broken links ignored\n",
-                relationshipCreator.getLinkCount(), elapsedSeconds, relationshipCreator.getBadLinkCount());
+		long startTime = System.currentTimeMillis();
+		relationshipCreator.parse(inputFile);
+		long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+		System.out.printf("\n%d links imported in %d seconds; %d broken links ignored\n",
+				relationshipCreator.getLinkCount(), elapsedSeconds, relationshipCreator.getBadLinkCount());
+		inserter.shutdown();
 	}
 
 	private void loadNodes(ExecutionEngine engine) {
-		String query = "match (n) where n.lang={sourcelang} or n.lang={targetlang} return n.lang,n.wiki-id,n.title,id(n)";
-		Map<String, Object> parameters = MapUtil.map("sourcelang", sourceLang, "targetlang", targetLang);
-		ExecutionResult result = engine.execute(query, parameters);
-		
+		String query1 = "match (n:Page {lang:\"" + sourceLang + "\"}) return n.`wiki-id` as identifier,id(n)";
+		String query2 = "match (n:Category {lang:\"" + sourceLang + "\"}) return n.`wiki-id` as identifier,id(n)";
+		String query3 = "match (n:Page {lang:\"" + targetLang + "\"}) return n.title as identifier,id(n)";
+		String query4 = "match (n:Category {lang:\"" + targetLang + "\"}) return n.title as identifier,id(n)";
+		executeQuery(engine, query1, sourceIndex);
+		executeQuery(engine, query2, sourceIndex);
+		executeQuery(engine, query3, targetIndex);
+		executeQuery(engine, query4, targetIndex);
+
+	}
+
+	private void executeQuery(ExecutionEngine engine, String query, Map<String, Long> index) {
+		ExecutionResult result = engine.execute(query);
+
 		for ( Map<String, Object> row : result )
 		{
-		    Map<String, Object> values = new HashMap<String, Object>();
+			Map<String, Object> values = new HashMap<String, Object>();
 			for ( Entry<String, Object> column : row.entrySet() )
 				values.put(column.getKey(), column.getValue());
-		    if( values.get("n.lang").equals(sourceLang) )
-		    	sourceIndex.put((String)values.get("n.wiki-id"), (Long)values.get("id(n)"));
-		    else 
-		    	if (values.get("n.lang").equals(targetLang))
-		    		targetIndex.put((String)values.get("n.title"), (Long)values.get("id(n)"));
-			
+			index.put((String)values.get("identifier"), (Long)values.get("id(n)"));
+
 		}
-		
-
 	}
 
-	private static void registerShutdownHook( final GraphDatabaseService graphDb )
-	{
-		Runtime.getRuntime().addShutdownHook( new Thread()
-		{
-			@Override
-			public void run()
-			{
-				graphDb.shutdown();
-			}
-		} );
-	}
+	
 
 }

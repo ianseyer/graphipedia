@@ -36,7 +36,9 @@ public class ImportGraph {
 		inserter = BatchInserters.inserter(dataDir);
 		if( !append ) {
 			inserter.createDeferredSchemaIndex(WikiLabel.Page).on("title").create();
+			inserter.createDeferredSchemaIndex(WikiLabel.Page).on("lang").create();
 			inserter.createDeferredSchemaIndex(WikiLabel.Category).on("title").create();
+			inserter.createDeferredSchemaIndex(WikiLabel.Category).on("lang").create();
 		}
 		inMemoryIndex = new HashMap<String, Long>();
 	}
