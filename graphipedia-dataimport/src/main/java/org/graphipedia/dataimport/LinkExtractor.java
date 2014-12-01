@@ -22,9 +22,7 @@
 package org.graphipedia.dataimport;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +30,6 @@ import java.util.regex.Pattern;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.neo4j.helpers.collection.MapUtil;
 
 public class LinkExtractor extends SimpleStaxParser {
 

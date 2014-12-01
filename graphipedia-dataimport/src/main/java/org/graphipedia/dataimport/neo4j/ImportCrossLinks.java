@@ -44,7 +44,7 @@ public class ImportCrossLinks {
 
 	public void importCrossLinks() throws IOException {
 		GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(neo4jdb);
-		registerShutdownHook(graphDb);
+		//registerShutdownHook(graphDb);
 		try(Transaction tx = graphDb.beginTx()) {
 			System.out.println("Loading nodes in memory...");
 			loadNodes(new ExecutionEngine(graphDb));
