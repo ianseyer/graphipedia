@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.graphipedia.dataimport.neo4j.WikiLabel;
+import org.graphipedia.dataimport.neo4j.WikiNodeProperty;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -52,6 +54,7 @@ public class CrossLinkExtractor {
 						String sourcePage = matcher1.group(1);
 						String targetLang = matcher1.group(2);
 						String targetPage = matcher1.group(3);
+						targetPage = targetPage.substring(0, 1).toUpperCase() + targetPage.substring(1);
 						int fileIndex;
 						if( (fileIndex = isTargetLang(targetLang)) != -1 && targetPage.length() > 0 && 
 								( !targetPage.contains(":") || targetPage.startsWith(WikipediaNamespace.getCategoryName(targetLang)+":") ) ) {
@@ -78,11 +81,11 @@ public class CrossLinkExtractor {
 	}
 
 	private long getNodeIdByWikiId(String wikiId, String lang) {
-		ResourceIterator<Node> pages = graphDb.findNodesByLabelAndProperty(DynamicLabel.label("Page"), "wiki-id", wikiId).iterator();
+		ResourceIterator<Node> pages = graphDb.findNodesByLabelAndProperty(WikiLabel.Page, WikiNodeProperty.wikiid.name(), wikiId).iterator();
 		if(pages.hasNext())
 			return pages.next().getId();
 		
-		ResourceIterator<Node> categories = graphDb.findNodesByLabelAndProperty(DynamicLabel.label("Category"), "wiki-id", wikiId).iterator();
+		ResourceIterator<Node> categories = graphDb.findNodesByLabelAndProperty(WikiLabel.Category, WikiNodeProperty.wikiid.name(), wikiId).iterator();
 		if (categories.hasNext())
 			return categories.next().getId();
 		
@@ -90,11 +93,11 @@ public class CrossLinkExtractor {
 	}
 
 	private long getNodeIdByTitle(String title, String lang) { 
-		ResourceIterator<Node> pages = graphDb.findNodesByLabelAndProperty(DynamicLabel.label("Page"), "title", title).iterator();
+		ResourceIterator<Node> pages = graphDb.findNodesByLabelAndProperty(WikiLabel.Page, WikiNodeProperty.title.name(), title).iterator();
 		if(pages.hasNext())
 			return pages.next().getId();
 		
-		ResourceIterator<Node> categories = graphDb.findNodesByLabelAndProperty(DynamicLabel.label("Category"), "title", title).iterator();
+		ResourceIterator<Node> categories = graphDb.findNodesByLabelAndProperty(WikiLabel.Category, WikiNodeProperty.title.name(), title).iterator();
 		if (categories.hasNext())
 			return categories.next().getId();
 		

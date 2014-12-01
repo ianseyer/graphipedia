@@ -81,7 +81,7 @@ public class NodeCreator extends SimpleStaxParser {
     }
 
     private void createNode(String title, String wikiId) {
-        Map<String, Object> properties = MapUtil.map("wiki-id", wikiId, "title", title, "lang", langCode);
+        Map<String, Object> properties = MapUtil.map(WikiNodeProperty.wikiid.name(), wikiId, WikiNodeProperty.title.name(), title, WikiNodeProperty.lang.name(), langCode);
         boolean isCategory = title.startsWith(WikipediaNamespace.getCategoryName(langCode)+":");
         WikiLabel label = null;
         if (isCategory) {
