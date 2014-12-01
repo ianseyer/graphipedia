@@ -37,8 +37,10 @@ public class ImportGraph {
 		if( !append ) {
 			inserter.createDeferredSchemaIndex(WikiLabel.Page).on("title").create();
 			inserter.createDeferredSchemaIndex(WikiLabel.Page).on("lang").create();
+			inserter.createDeferredSchemaIndex(WikiLabel.Page).on("wiki-id").create();
 			inserter.createDeferredSchemaIndex(WikiLabel.Category).on("title").create();
 			inserter.createDeferredSchemaIndex(WikiLabel.Category).on("lang").create();
+			inserter.createDeferredSchemaIndex(WikiLabel.Category).on("wiki-id").create();
 		}
 		inMemoryIndex = new HashMap<String, Long>();
 	}
