@@ -112,6 +112,7 @@ public class LinkExtractor extends SimpleStaxParser {
             Matcher matcher = LINK_PATTERN.matcher(text);
             while (matcher.find()) {
                 String link = matcher.group(1);
+                link = link.substring(0, 1).toUpperCase() + link.substring(1);
                 if (!link.contains(":") || link.startsWith(WikipediaNamespace.getCategoryName(lang)+":")) {
                     if (link.contains("|")) {
                         link = link.substring(0, link.lastIndexOf('|'));
