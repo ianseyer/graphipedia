@@ -5,13 +5,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
@@ -25,7 +25,6 @@ public class CrossLinkExtractor {
 	private String sourceLang;
 	private String[] targetLangs;
 	private GraphDatabaseService graphDb;
-	private ExecutionEngine engine;
 	private final ProgressCounter linkCounter = new ProgressCounter();
 
 	public CrossLinkExtractor(BufferedWriter[] bw, String sourceLang, String[] targetLangs, String neo4jdb) {
@@ -33,7 +32,6 @@ public class CrossLinkExtractor {
 		this.sourceLang = sourceLang;
 		this.targetLangs = targetLangs;
 		this.graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(neo4jdb);
-		this.engine = new ExecutionEngine(graphDb);
 		registerShutdownHook(graphDb);
 	}
 
@@ -59,6 +57,7 @@ public class CrossLinkExtractor {
 								( !targetPage.contains(":") || targetPage.startsWith(WikipediaNamespace.getCategoryName(targetLang)+":") ) ) {
 							long sourcePageId = getNodeIdByWikiId(sourcePage, sourceLang);
 							long targetPageId = getNodeIdByTitle(targetPage, targetLangs[fileIndex]);
+							
 							if( sourcePageId != -1 && targetPageId != -1 ) {
 								bw[fileIndex].write(sourcePageId + "\t" + targetPageId + "\n");
 								linkCounter.increment();
@@ -79,32 +78,26 @@ public class CrossLinkExtractor {
 	}
 
 	private long getNodeIdByWikiId(String wikiId, String lang) {
-		String query1 = "match (n:Page {`wiki-id`:\""+ wikiId +"\"}) where n.lang=\""+lang+"\" return id(n)";
-		ExecutionResult result = engine.execute(query1);
-		Iterator<Long> it = result.columnAs("id(n)");
-		if( it.hasNext() )
-			return it.next();
-		String query2 = "match (n:Category {`wiki-id`:\""+ wikiId +"\"}) where n.lang=\""+lang+"\" return id(n)";
-		result = engine.execute(query2);
-		it = result.columnAs("id(n)");
-		if( it.hasNext() )
-			return it.next();
-
+		ResourceIterator<Node> pages = graphDb.findNodesByLabelAndProperty(DynamicLabel.label("Page"), "wiki-id", wikiId).iterator();
+		if(pages.hasNext())
+			return pages.next().getId();
+		
+		ResourceIterator<Node> categories = graphDb.findNodesByLabelAndProperty(DynamicLabel.label("Category"), "wiki-id", wikiId).iterator();
+		if (categories.hasNext())
+			return categories.next().getId();
+		
 		return -1;
 	}
 
 	private long getNodeIdByTitle(String title, String lang) { 
-		String query1 = "match (n:Page {title:\""+ title +"\"}) where n.lang=\""+lang+"\" return id(n)";
-		ExecutionResult result = engine.execute(query1);
-		Iterator<Long> it = result.columnAs("id(n)");
-		if( it.hasNext() )
-			return it.next();
-		String query2 = "match (n:Category {title:\""+ title +"\"}) where n.lang=\""+lang+"\" return id(n)";
-		result = engine.execute(query2);
-		it = result.columnAs("id(n)");
-		if( it.hasNext() )
-			return it.next();
-
+		ResourceIterator<Node> pages = graphDb.findNodesByLabelAndProperty(DynamicLabel.label("Page"), "title", title).iterator();
+		if(pages.hasNext())
+			return pages.next().getId();
+		
+		ResourceIterator<Node> categories = graphDb.findNodesByLabelAndProperty(DynamicLabel.label("Category"), "title", title).iterator();
+		if (categories.hasNext())
+			return categories.next().getId();
+		
 		return -1;
 	}
 
