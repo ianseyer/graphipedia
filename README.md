@@ -31,15 +31,18 @@ Assuming you downloaded `pages-articles.xml.bz2`, follow these steps:
 1.  Run ExtractLinks to create a smaller intermediate XML file containing page titles
     and links only. The best way to do this is decompress the bzip2 file and pipe the output directly to ExtractLinks:
 
-    bzip2 -dc pages-articles.xml.bz2 | java -classpath graphipedia-dataimport.jar org.graphipedia.dataimport.ExtractLinks - enwiki-links.xml
+    `bzip2 -dc pages-articles.xml.bz2 | java -classpath graphipedia-dataimport.jar org.graphipedia.dataimport.ExtractLinks - enwiki-links.xml en`
 
 2.  Run ImportGraph to create a Neo4j database with nodes and relationships into
-    a `graphdb` directory
+    a `graph.db` directory. The following arguments "`en false 12 150`" describe the
+    language code, whether to append the graph to an existing database, the estimated
+    number of nodes and edges in millions. A good estimate is crucial, or neo4j will
+    not be able to keep everything in memory!
 
-    java -Xmx3G -classpath graphipedia-dataimport.jar org.graphipedia.dataimport.neo4j.ImportGraph enwiki-links.xml graphdb
+    `java -Xmx8G -classpath graphipedia-dataimport.jar org.graphipedia.dataimport.neo4j.ImportGraph enwiki-links.xml graph.db en false 12 150`
 
-Just to give an idea, enwiki-20130204-pages-articles.xml.bz2 is 9.1G and
-contains almost 10M pages, resulting in over 92M links to be extracted.
+Just to give an idea, `enwiki-20141106-pages-articles.xml.bz2` is 11.4G and
+contains about 12M pages, resulting in over 150M links to be extracted.
 
 On my laptop _with an SSD drive_ the import takes about 30 minutes to decompress/ExtractLinks (pretty much the same time
 as decompressing only) and an additional 10 minutes to ImportGraph.
