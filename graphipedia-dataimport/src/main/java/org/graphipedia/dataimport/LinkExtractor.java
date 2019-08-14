@@ -70,6 +70,18 @@ public class LinkExtractor extends SimpleStaxParser {
             title = value;
         } else if ("text".equals(element)) {
             text = value;
+        } else if (value.toString().startsWith("Category")) {
+            System.out.println('CATEGORY')
+            System.out.println('CATEGORY')
+            System.out.println('CATEGORY')
+            System.out.println('CATEGORY')
+            System.out.println('CATEGORY')
+            System.out.println(value)
+            System.out.println('CATEGORY')
+            System.out.println('CATEGORY')
+            System.out.println('CATEGORY')
+            System.out.println('CATEGORY')
+            System.out.println('CATEGORY')
         }
 
     }
