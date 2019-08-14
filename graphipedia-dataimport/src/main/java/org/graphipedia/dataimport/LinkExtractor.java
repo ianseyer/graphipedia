@@ -73,7 +73,7 @@ public class LinkExtractor extends SimpleStaxParser {
             if (value.toString().endsWith("]]")) {
                 // pattern matching from https://stackoverflow.com/a/11255490
                 Matcher m = Pattern.compile(
-                            Pattern.quote("[[")
+                            Pattern.quote("[[Category")
                             + "(.*?)"
                             + Pattern.quote("]]")
                    ).matcher(value);
@@ -83,17 +83,17 @@ public class LinkExtractor extends SimpleStaxParser {
                     //here you insert 'match' into the list
                 }
                 // List<String> strings = Arrays.asList( input.replaceAll("^.*?[[", "").split("]].*?([[|$)"));
-                System.out.println("CATEGORY");
-                System.out.println("CATEGORY");
-                System.out.println("CATEGORY");
-                System.out.println("CATEGORY");
-                System.out.println("CATEGORY");
-//                System.out.println(strings);
-                System.out.println("CATEGORY");
-                System.out.println("CATEGORY");
-                System.out.println("CATEGORY");
-                System.out.println("CATEGORY");
-                System.out.println("CATEGORY");
+//                 System.out.println("CATEGORY");
+//                 System.out.println("CATEGORY");
+//                 System.out.println("CATEGORY");
+//                 System.out.println("CATEGORY");
+//                 System.out.println("CATEGORY");
+// //                System.out.println(strings);
+//                 System.out.println("CATEGORY");
+//                 System.out.println("CATEGORY");
+//                 System.out.println("CATEGORY");
+//                 System.out.println("CATEGORY");
+//                 System.out.println("CATEGORY");
             }
 
         }
