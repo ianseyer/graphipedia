@@ -70,18 +70,32 @@ public class LinkExtractor extends SimpleStaxParser {
             title = value;
         } else if ("text".equals(element)) {
             text = value;
-        } else if (value.toString().startsWith("Category")) {
-            System.out.println("CATEGORY");
-            System.out.println("CATEGORY");
-            System.out.println("CATEGORY");
-            System.out.println("CATEGORY");
-            System.out.println("CATEGORY");
-            System.out.println(value);
-            System.out.println("CATEGORY");
-            System.out.println("CATEGORY");
-            System.out.println("CATEGORY");
-            System.out.println("CATEGORY");
-            System.out.println("CATEGORY");
+            if (value.toString().endsWith("]]")) {
+                // pattern matching from https://stackoverflow.com/a/11255490
+                Matcher m = Pattern.compile(
+                            Pattern.quote("[[")
+                            + "(.*?)"
+                            + Pattern.quote("]]")
+                   ).matcher(str);
+                while(m.find()){
+                    String match = m.group(1);
+                    System.out.println(">"+match+"<");
+                    //here you insert 'match' into the list
+                }
+                // List<String> strings = Arrays.asList( input.replaceAll("^.*?[[", "").split("]].*?([[|$)"));
+                System.out.println("CATEGORY");
+                System.out.println("CATEGORY");
+                System.out.println("CATEGORY");
+                System.out.println("CATEGORY");
+                System.out.println("CATEGORY");
+                System.out.println(strings);
+                System.out.println("CATEGORY");
+                System.out.println("CATEGORY");
+                System.out.println("CATEGORY");
+                System.out.println("CATEGORY");
+                System.out.println("CATEGORY");
+            }
+
         }
 
     }
