@@ -76,7 +76,7 @@ public class LinkExtractor extends SimpleStaxParser {
                             Pattern.quote("[[")
                             + "(.*?)"
                             + Pattern.quote("]]")
-                   ).matcher(str);
+                   ).matcher(value);
                 while(m.find()){
                     String match = m.group(1);
                     System.out.println(">"+match+"<");
@@ -88,7 +88,7 @@ public class LinkExtractor extends SimpleStaxParser {
                 System.out.println("CATEGORY");
                 System.out.println("CATEGORY");
                 System.out.println("CATEGORY");
-                System.out.println(strings);
+//                System.out.println(strings);
                 System.out.println("CATEGORY");
                 System.out.println("CATEGORY");
                 System.out.println("CATEGORY");
