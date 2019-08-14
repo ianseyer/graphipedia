@@ -51,6 +51,9 @@ public class LinkExtractor extends SimpleStaxParser {
 
     @Override
     protected void handleElement(String element, String value) {
+        print(element)
+        print(value)
+
         if ("page".equals(element)) {
             if (!title.contains(":")) {
                 try {
@@ -66,6 +69,7 @@ public class LinkExtractor extends SimpleStaxParser {
         } else if ("text".equals(element)) {
             text = value;
         }
+
     }
 
     private void writePage(String title, String text) throws XMLStreamException {
