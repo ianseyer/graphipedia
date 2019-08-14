@@ -51,10 +51,10 @@ public class LinkExtractor extends SimpleStaxParser {
 
     @Override
     protected void handleElement(String element, String value) {
-        System.out.print("element ");
-        System.out.println(element);
-        System.out.print("value ");        
-        System.out.println(value);
+        // System.out.print("element ");
+        // System.out.println(element);
+        // System.out.print("value ");        
+        // System.out.println(value);
 
         if ("page".equals(element)) {
             if (!title.contains(":")) {
