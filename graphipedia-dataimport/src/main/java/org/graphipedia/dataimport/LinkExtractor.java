@@ -146,8 +146,8 @@ public class LinkExtractor extends SimpleStaxParser {
         return links;
     }
     private Set<String> parseCategories(String text) {
-        if (value.toString().endsWith("]]")) {
-            // pattern matching from https://stackoverflow.com/a/11255490
+        // if (text.toString().endsWith("]]")) {
+        //     // pattern matching from https://stackoverflow.com/a/11255490
 
             Set<String> categories = new HashSet<String>();
             if (text != null) {
@@ -163,7 +163,7 @@ public class LinkExtractor extends SimpleStaxParser {
                     categories.add(match);
                 }
             }
-            return links;
-        }
+            return categories;
+        // }
     }
 }
