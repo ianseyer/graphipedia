@@ -64,7 +64,7 @@ public class LinkExtractor extends SimpleStaxParser {
                     System.out.println("OMG .. something went wrong. Here's what I was trying to parse: ");
                     System.out.println("Title: " + title);
                     System.out.println("Text: " + text);
-                    throw new RuntimeException(streamException);
+                    // throw new RuntimeException(streamException);
                 }
             }
             title = null;
@@ -155,7 +155,7 @@ public class LinkExtractor extends SimpleStaxParser {
             Set<String> categories = new HashSet<String>();
             if (text != null) {
                 Matcher m = Pattern.compile(
-                            Pattern.quote("[[Category")
+                            Pattern.quote("[[Category:")
                             + "(.*?)"
                             + Pattern.quote("]]")
                     ).matcher(text);
