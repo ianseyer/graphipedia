@@ -149,21 +149,21 @@ public class LinkExtractor extends SimpleStaxParser {
         if (value.toString().endsWith("]]")) {
             // pattern matching from https://stackoverflow.com/a/11255490
 
-        Set<String> categories = new HashSet<String>();
-        if (text != null) {
-            Matcher m = Pattern.compile(
-                        Pattern.quote("[[Category")
-                        + "(.*?)"
-                        + Pattern.quote("]]")
-                ).matcher(text);
-            while(m.find()){
-                String match = m.group(1);
-                System.out.println(match);
-                //here you insert 'match' into the list
-                categories.add(match);
+            Set<String> categories = new HashSet<String>();
+            if (text != null) {
+                Matcher m = Pattern.compile(
+                            Pattern.quote("[[Category")
+                            + "(.*?)"
+                            + Pattern.quote("]]")
+                    ).matcher(text);
+                while(m.find()){
+                    String match = m.group(1);
+                    System.out.println(match);
+                    //here you insert 'match' into the list
+                    categories.add(match);
+                }
             }
+            return links;
         }
-        return links;
     }
-
 }
