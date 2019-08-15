@@ -160,7 +160,7 @@ public class LinkExtractor extends SimpleStaxParser {
                 String match = m.group(1);
                 System.out.println(match);
                 //here you insert 'match' into the list
-                categories.add(match)
+                categories.add(match);
             }
         }
         return links;
