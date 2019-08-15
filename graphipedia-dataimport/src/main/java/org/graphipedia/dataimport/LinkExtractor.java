@@ -61,6 +61,9 @@ public class LinkExtractor extends SimpleStaxParser {
                 try {
                     writePage(title, text);
                 } catch (XMLStreamException streamException) {
+                    System.out.println("OMG .. something went wrong. Here's what I was trying to parse: ");
+                    System.out.println("Title: " + title);
+                    System.out.println("Text: " + text);
                     throw new RuntimeException(streamException);
                 }
             }
