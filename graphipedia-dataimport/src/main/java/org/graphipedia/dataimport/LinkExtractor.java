@@ -70,18 +70,18 @@ public class LinkExtractor extends SimpleStaxParser {
             title = value;
         } else if ("text".equals(element)) {
             text = value;
-            if (value.toString().endsWith("]]")) {
-                // pattern matching from https://stackoverflow.com/a/11255490
-                Matcher m = Pattern.compile(
-                            Pattern.quote("[[Category")
-                            + "(.*?)"
-                            + Pattern.quote("]]")
-                   ).matcher(value);
-                while(m.find()){
-                    String match = m.group(1);
-                    System.out.println(">"+match+"<");
-                    //here you insert 'match' into the list
-                }
+            // if (value.toString().endsWith("]]")) {
+            //     // pattern matching from https://stackoverflow.com/a/11255490
+            //     Matcher m = Pattern.compile(
+            //                 Pattern.quote("[[Category")
+            //                 + "(.*?)"
+            //                 + Pattern.quote("]]")
+            //        ).matcher(value);
+            //     while(m.find()){
+            //         String match = m.group(1);
+            //         System.out.println(">"+match+"<");
+            //         //here you insert 'match' into the list
+            //     }
                 // List<String> strings = Arrays.asList( input.replaceAll("^.*?[[", "").split("]].*?([[|$)"));
 //                 System.out.println("CATEGORY");
 //                 System.out.println("CATEGORY");
@@ -94,11 +94,9 @@ public class LinkExtractor extends SimpleStaxParser {
 //                 System.out.println("CATEGORY");
 //                 System.out.println("CATEGORY");
 //                 System.out.println("CATEGORY");
-            }
-
         }
-
     }
+
 
     private void writePage(String title, String text) throws XMLStreamException {
         writer.writeStartElement("p");
@@ -113,6 +111,16 @@ public class LinkExtractor extends SimpleStaxParser {
         for (String link : links) {
             writer.writeStartElement("l");
             writer.writeCharacters(link);
+            writer.writeEndElement();
+        }
+        
+        writer.writeEndElement();
+
+        Set<String> categories = parseCategories(text);
+
+        for (String category : categories) {
+            writer.writeStartElement("c");
+            writer.writeCharacters(category);
             writer.writeEndElement();
         }
         
@@ -133,6 +141,26 @@ public class LinkExtractor extends SimpleStaxParser {
                     }
                     links.add(link);
                 }
+            }
+        }
+        return links;
+    }
+    private Set<String> parseCategories(String text) {
+        if (value.toString().endsWith("]]")) {
+            // pattern matching from https://stackoverflow.com/a/11255490
+
+        Set<String> categories = new HashSet<String>();
+        if (text != null) {
+            Matcher m = Pattern.compile(
+                        Pattern.quote("[[Category")
+                        + "(.*?)"
+                        + Pattern.quote("]]")
+                ).matcher(text);
+            while(m.find()){
+                String match = m.group(1);
+                System.out.println(match);
+                //here you insert 'match' into the list
+                categories.add(match)
             }
         }
         return links;
