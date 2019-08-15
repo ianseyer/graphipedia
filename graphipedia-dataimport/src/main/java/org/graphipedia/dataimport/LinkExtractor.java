@@ -49,22 +49,15 @@ public class LinkExtractor extends SimpleStaxParser {
         return pageCounter.getCount();
     }
 
+
     @Override
     protected void handleElement(String element, String value) {
-        // System.out.print("element ");
-        // System.out.println(element);
-        // System.out.print("value ");        
-        // System.out.println(value);
-
         if ("page".equals(element)) {
             if (!title.contains(":")) {
                 try {
                     writePage(title, text);
                 } catch (XMLStreamException streamException) {
-                    System.out.println("OMG .. something went wrong. Here's what I was trying to parse: ");
-                    System.out.println("Title: " + title);
-                    System.out.println("Text: " + text);
-                    // throw new RuntimeException(streamException);
+                    throw new RuntimeException(streamException);
                 }
             }
             title = null;
@@ -73,33 +66,8 @@ public class LinkExtractor extends SimpleStaxParser {
             title = value;
         } else if ("text".equals(element)) {
             text = value;
-            // if (value.toString().endsWith("]]")) {
-            //     // pattern matching from https://stackoverflow.com/a/11255490
-            //     Matcher m = Pattern.compile(
-            //                 Pattern.quote("[[Category")
-            //                 + "(.*?)"
-            //                 + Pattern.quote("]]")
-            //        ).matcher(value);
-            //     while(m.find()){
-            //         String match = m.group(1);
-            //         System.out.println(">"+match+"<");
-            //         //here you insert 'match' into the list
-            //     }
-                // List<String> strings = Arrays.asList( input.replaceAll("^.*?[[", "").split("]].*?([[|$)"));
-//                 System.out.println("CATEGORY");
-//                 System.out.println("CATEGORY");
-//                 System.out.println("CATEGORY");
-//                 System.out.println("CATEGORY");
-//                 System.out.println("CATEGORY");
-// //                System.out.println(strings);
-//                 System.out.println("CATEGORY");
-//                 System.out.println("CATEGORY");
-//                 System.out.println("CATEGORY");
-//                 System.out.println("CATEGORY");
-//                 System.out.println("CATEGORY");
         }
     }
-
 
     private void writePage(String title, String text) throws XMLStreamException {
         writer.writeStartElement("p");
@@ -117,18 +85,16 @@ public class LinkExtractor extends SimpleStaxParser {
             writer.writeEndElement();
         }
         
-        writer.writeEndElement();
-
         Set<String> categories = parseCategories(text);
-
         for (String category : categories) {
+            System.out.println("category: " + category);
             writer.writeStartElement("c");
             writer.writeCharacters(category);
             writer.writeEndElement();
         }
         
         writer.writeEndElement();
-
+        
         pageCounter.increment();
     }
 
@@ -148,25 +114,23 @@ public class LinkExtractor extends SimpleStaxParser {
         }
         return links;
     }
-    private Set<String> parseCategories(String text) {
-        // if (text.toString().endsWith("]]")) {
-        //     // pattern matching from https://stackoverflow.com/a/11255490
 
-            Set<String> categories = new HashSet<String>();
+    private Set<String> parseCategories(String text) {
+        Set<String> categories = new HashSet<String>();
+        if (text.toString().endsWith("]]")) {
             if (text != null) {
-                Matcher m = Pattern.compile(
+                Matcher matcher = Pattern.compile(
                             Pattern.quote("[[Category:")
                             + "(.*?)"
                             + Pattern.quote("]]")
                     ).matcher(text);
-                while(m.find()){
-                    String match = m.group(1);
-                    System.out.println(match);
-                    //here you insert 'match' into the list
-                    categories.add(match);
+                while(matcher.find()){
+                    String category = matcher.group(1);
+                    categories.add(category);
                 }
             }
-            return categories;
-        // }
+        }
+        return categories;
     }
+    
 }
