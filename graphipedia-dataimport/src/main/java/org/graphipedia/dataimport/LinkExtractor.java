@@ -23,6 +23,8 @@ package org.graphipedia.dataimport;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,9 +41,10 @@ public class LinkExtractor extends SimpleStaxParser {
 
     private String title;
     private String text;
+    private String id;
 
     public LinkExtractor(XMLStreamWriter writer) {
-        super(Arrays.asList("page", "title", "text"));
+        super(Arrays.asList("page", "title", "text", "id"));
         this.writer = writer;
     }
 
@@ -49,13 +52,14 @@ public class LinkExtractor extends SimpleStaxParser {
         return pageCounter.getCount();
     }
 
+
+    @Override
+    protected void createNode(String title, String text, ArrayList<String> categories, String id) {
+        String nothing;
+    }
+
     @Override
     protected void handleElement(String element, String value) {
-        System.out.print('element ');
-        System.out.println(element);
-        System.out.print('value ');        
-        System.out.println(value);
-
         if ("page".equals(element)) {
             if (!title.contains(":")) {
                 try {
@@ -66,30 +70,47 @@ public class LinkExtractor extends SimpleStaxParser {
             }
             title = null;
             text = null;
+            id = null;
         } else if ("title".equals(element)) {
             title = value;
         } else if ("text".equals(element)) {
             text = value;
+        } else if ("id".equals(element)) {
+            id = value;
         }
-
     }
 
     private void writePage(String title, String text) throws XMLStreamException {
-        writer.writeStartElement("p");
-        
-        writer.writeStartElement("t");
+        writer.writeStartElement("page");
+
+        writer.writeStartElement("title");
         writer.writeCharacters(title);
         writer.writeEndElement();
-        
+
+        writer.writeStartElement("id");
+        writer.writeCharacters(id);
+        writer.writeEndElement();
+
         Set<String> links = parseLinks(text);
         links.remove(title);
-        
+
         for (String link : links) {
-            writer.writeStartElement("l");
+            writer.writeStartElement("link");
             writer.writeCharacters(link);
             writer.writeEndElement();
         }
-        
+
+        Set<String> categories = parseCategories(text);
+        for (String category : categories) {
+            writer.writeStartElement("category");
+            writer.writeCharacters(category);
+            writer.writeEndElement();
+        }
+
+        writer.writeStartElement("text");
+        writer.writeCharacters(text);
+        writer.writeEndElement();
+
         writer.writeEndElement();
 
         pageCounter.increment();
@@ -110,6 +131,24 @@ public class LinkExtractor extends SimpleStaxParser {
             }
         }
         return links;
+    }
+
+    private Set<String> parseCategories(String text) {
+        Set<String> categories = new HashSet<String>();
+        if (text.toString().endsWith("]]")) {
+            if (text != null) {
+                Matcher matcher = Pattern.compile(
+                            Pattern.quote("[[Category:")
+                            + "(.*?)"
+                            + Pattern.quote("]]")
+                    ).matcher(text);
+                while(matcher.find()){
+                    String category = matcher.group(1);
+                    categories.add(category);
+                }
+            }
+        }
+        return categories;
     }
 
 }

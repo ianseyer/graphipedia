@@ -22,7 +22,9 @@
 package org.graphipedia.dataimport.neo4j;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.List;
 
 import org.graphipedia.dataimport.ProgressCounter;
 import org.graphipedia.dataimport.SimpleStaxParser;
@@ -37,7 +39,7 @@ public class NodeCreator extends SimpleStaxParser {
     private final ProgressCounter pageCounter = new ProgressCounter();
 
     public NodeCreator(BatchInserter inserter, Map<String, Long> inMemoryIndex) {
-        super(Arrays.asList("t"));
+        super(Arrays.asList("title", "text", "category", "id"));
         this.inserter = inserter;
         this.inMemoryIndex = inMemoryIndex;
     }
@@ -48,13 +50,19 @@ public class NodeCreator extends SimpleStaxParser {
 
     @Override
     protected void handleElement(String element, String value) {
-        if ("t".equals(element)) {
-            createNode(value);
-        }
+        String nothing;
     }
 
-    private void createNode(String title) {
-        Map<String, Object> properties = MapUtil.map("title", title);
+    @Override
+    protected void createNode(String title, String text, ArrayList<String> categories, String id) {
+        System.out.println(title);
+        System.out.println(text);
+        System.out.println(id);
+        String category = "";
+        if(categories.size() > 0) {
+          category = categories.get(0);
+        }
+        Map<String, Object> properties = MapUtil.map("title", title, "text", text, "categories", category, "id", id);
         long nodeId = inserter.createNode(properties, WikiLabel.Page);
         inMemoryIndex.put(title, nodeId);
         pageCounter.increment();

@@ -1,0 +1,8 @@
+version: '3'
+services:
+  web:
+    image: gcr.io/knowsedge/etl:0.1
+    volumes:
+      - etl:/etl
+volumes:
+  - etl

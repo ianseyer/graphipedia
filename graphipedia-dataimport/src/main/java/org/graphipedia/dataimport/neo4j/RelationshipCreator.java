@@ -23,6 +23,8 @@ package org.graphipedia.dataimport.neo4j;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.graphipedia.dataimport.ProgressCounter;
 import org.graphipedia.dataimport.SimpleStaxParser;
@@ -39,7 +41,7 @@ public class RelationshipCreator extends SimpleStaxParser {
     private int badLinkCount = 0;
 
     public RelationshipCreator(BatchInserter inserter,  Map<String, Long> inMemoryIndex) {
-        super(Arrays.asList("t", "l"));
+        super(Arrays.asList("title", "link"));
         this.inserter = inserter;
         this.inMemoryIndex = inMemoryIndex;
     }
@@ -54,11 +56,22 @@ public class RelationshipCreator extends SimpleStaxParser {
 
     @Override
     protected void handleElement(String element, String value) {
-        if ("t".equals(element)) {
-            nodeId = findNodeId(value);
-        } else if ("l".equals(element)) {
+        if ("title".equals(element)) {
+            try {
+              nodeId = findNodeId(value);
+            } catch (NullPointerException e) {
+              System.out.println("Failed to find");
+              System.out.println(value);
+              System.out.println(e);
+            }
+        } else if ("link".equals(element)) {
             createRelationship(nodeId, value);
         }
+    }
+
+    @Override
+    protected void createNode(String title, String text, ArrayList<String> categories, String id) {
+        String nothing;
     }
 
     private void createRelationship(long nodeId, String link) {
