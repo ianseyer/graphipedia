@@ -60,8 +60,6 @@ public class RelationshipCreator extends SimpleStaxParser {
             try {
               nodeId = findNodeId(value);
             } catch (NullPointerException e) {
-              System.out.println("Failed to find");
-              System.out.println(value);
               System.out.println(e);
             }
         } else if ("link".equals(element)) {
