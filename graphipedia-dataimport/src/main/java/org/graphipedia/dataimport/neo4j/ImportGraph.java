@@ -23,6 +23,8 @@ package org.graphipedia.dataimport.neo4j;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
+import java.io.IOException;
 
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
@@ -32,8 +34,8 @@ public class ImportGraph {
 	private final BatchInserter inserter;
 	private final Map<String, Long> inMemoryIndex;
 
-	public ImportGraph(String dataDir, boolean append, int mNodes, int mEdges) {
-		inserter = BatchInserters.inserter(dataDir, generateConfig(mNodes, mEdges));
+	public ImportGraph(String dataDir, boolean append, int mNodes, int mEdges) throws IOException {
+		inserter = BatchInserters.inserter(new File(dataDir), generateConfig(mNodes, mEdges));
 		if( !append ) {
 			inserter.createDeferredSchemaIndex(WikiLabel.Page).on(WikiNodeProperty.title.name()).create();
 			inserter.createDeferredSchemaIndex(WikiLabel.Page).on(WikiNodeProperty.lang.name()).create();
