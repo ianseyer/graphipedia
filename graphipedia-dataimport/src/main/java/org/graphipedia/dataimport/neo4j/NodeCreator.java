@@ -73,7 +73,7 @@ public class NodeCreator extends SimpleStaxParser {
             createNode(title, text, wikiId);
             title = null;
             wikiId = null;
-            text =null;
+            text = null;
         } else if ("t".equals(element)) {
         	title = value;
         } else if ("i".equals(element)) {
@@ -96,6 +96,8 @@ public class NodeCreator extends SimpleStaxParser {
         	numberOfPages += 1;
         	label = WikiLabel.Page;
         }
+        System.out.println(properties);
+        System.out.println(label);
         long nodeId = inserter.createNode(properties, label);
         inMemoryIndex.put(title, nodeId);
         pageCounter.increment();
