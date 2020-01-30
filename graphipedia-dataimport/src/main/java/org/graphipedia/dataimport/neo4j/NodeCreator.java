@@ -38,13 +38,13 @@ public class NodeCreator extends SimpleStaxParser {
     
     private String title;
     private String wikiId;
-
+    private String text;
     private final ProgressCounter pageCounter = new ProgressCounter();
     private int numberOfCategories;
     private int numberOfPages; 
 
     public NodeCreator(BatchInserter inserter, Map<String, Long> inMemoryIndex, String langCode) {
-        super(Arrays.asList("p", "t", "i"));
+        super(Arrays.asList("p", "t", "text", "i"));
         this.inserter = inserter;
         this.inMemoryIndex = inMemoryIndex;
         this.langCode = langCode;
@@ -52,6 +52,7 @@ public class NodeCreator extends SimpleStaxParser {
         this.numberOfPages = 0;
         title = null;
         wikiId = null;
+        text = null;
     }
 
     public int getPageCount() {
@@ -69,19 +70,22 @@ public class NodeCreator extends SimpleStaxParser {
     @Override
     protected void handleElement(String element, String value) {
         if ("p".equals(element)) {
-            createNode(title, wikiId);
+            createNode(title, text, wikiId);
             title = null;
             wikiId = null;
+            text =null;
         } else if ("t".equals(element)) {
         	title = value;
         } else if ("i".equals(element)) {
         	wikiId = value;
+        } else if ("text".equals(element)) {
+            text = value;
         }
         	
     }
 
-    private void createNode(String title, String wikiId) {
-        Map<String, Object> properties = MapUtil.map(WikiNodeProperty.wikiid.name(), wikiId, WikiNodeProperty.title.name(), title, WikiNodeProperty.lang.name(), langCode);
+    private void createNode(String title, String text, String wikiId) {
+        Map<String, Object> properties = MapUtil.map(WikiNodeProperty.wikiid.name(), wikiId, WikiNodeProperty.text.name(), text, WikiNodeProperty.title.name(), title, WikiNodeProperty.lang.name(), langCode);
         boolean isCategory = title.startsWith(WikipediaNamespace.getCategoryName(langCode)+":");
         WikiLabel label = null;
         if (isCategory) {
