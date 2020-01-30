@@ -21,6 +21,8 @@
 //
 package org.graphipedia.dataimport.neo4j;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.File;
@@ -46,7 +48,6 @@ public class ImportGraph {
 		}
 		inMemoryIndex = new HashMap<String, Long>();
 	}
-
 	/**
 	 * Generates a configuration suitable for batch imports. Reserves enough space to fit nodes and
 	 * relationships into memory. Estimates based on

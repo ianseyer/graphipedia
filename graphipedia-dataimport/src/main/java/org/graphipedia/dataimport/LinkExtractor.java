@@ -23,6 +23,8 @@ package org.graphipedia.dataimport;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +57,12 @@ public class LinkExtractor extends SimpleStaxParser {
         return pageCounter.getCount();
     }
 
+
+    @Override
+    protected void createNode(String title, String text, ArrayList<String> categories, String id) {
+        String nothing;
+    }
+
     @Override
     protected void handleElement(String element, String value) {
         if ("page".equals(element)) {
@@ -69,11 +77,6 @@ public class LinkExtractor extends SimpleStaxParser {
             text = null;
             id = null;
             extractId = true;
-        } else if ("title".equals(element)) {
-            title = value;
-        } else if ("text".equals(element)) {
-            text = value;
-        } else if ("id".equals(element)) {
         	if (extractId) {
         		id = value;
         		extractId = false;
@@ -94,13 +97,24 @@ public class LinkExtractor extends SimpleStaxParser {
         
         Set<String> links = parseLinks(text);
         links.remove(title);
-        
+
         for (String link : links) {
-            writer.writeStartElement("l");
+            writer.writeStartElement("link");
             writer.writeCharacters(link);
             writer.writeEndElement();
         }
-        
+
+        Set<String> categories = parseCategories(text);
+        for (String category : categories) {
+            writer.writeStartElement("category");
+            writer.writeCharacters(category);
+            writer.writeEndElement();
+        }
+
+        writer.writeStartElement("text");
+        writer.writeCharacters(text);
+        writer.writeEndElement();
+
         writer.writeEndElement();
 
         pageCounter.increment();
@@ -122,6 +136,24 @@ public class LinkExtractor extends SimpleStaxParser {
             }
         }
         return links;
+    }
+
+    private Set<String> parseCategories(String text) {
+        Set<String> categories = new HashSet<String>();
+        if (text.toString().endsWith("]]")) {
+            if (text != null) {
+                Matcher matcher = Pattern.compile(
+                            Pattern.quote("[[Category:")
+                            + "(.*?)"
+                            + Pattern.quote("]]")
+                    ).matcher(text);
+                while(matcher.find()){
+                    String category = matcher.group(1);
+                    categories.add(category);
+                }
+            }
+        }
+        return categories;
     }
 
 }

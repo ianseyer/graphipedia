@@ -23,6 +23,8 @@ package org.graphipedia.dataimport.neo4j;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.graphipedia.dataimport.ProgressCounter;
 import org.graphipedia.dataimport.SimpleStaxParser;
@@ -39,7 +41,7 @@ public class RelationshipCreator extends SimpleStaxParser {
     private int badLinkCount = 0;
 
     public RelationshipCreator(BatchInserter inserter,  Map<String, Long> inMemoryIndex) {
-        super(Arrays.asList("t", "l"));
+        super(Arrays.asList("title", "link"));
         this.inserter = inserter;
         this.inMemoryIndex = inMemoryIndex;
     }

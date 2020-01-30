@@ -22,7 +22,9 @@
 package org.graphipedia.dataimport.neo4j;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.List;
 
 import org.graphipedia.dataimport.ProgressCounter;
 import org.graphipedia.dataimport.SimpleStaxParser;
@@ -44,7 +46,7 @@ public class NodeCreator extends SimpleStaxParser {
     private int numberOfPages; 
 
     public NodeCreator(BatchInserter inserter, Map<String, Long> inMemoryIndex, String langCode) {
-        super(Arrays.asList("p", "t", "i"));
+        super(Arrays.asList("p", "t", "text", "i"));
         this.inserter = inserter;
         this.inMemoryIndex = inMemoryIndex;
         this.langCode = langCode;
@@ -68,6 +70,7 @@ public class NodeCreator extends SimpleStaxParser {
 
     @Override
     protected void handleElement(String element, String value) {
+<<<<<<< HEAD
         if ("p".equals(element)) {
             createNode(title, wikiId);
             title = null;
@@ -80,8 +83,8 @@ public class NodeCreator extends SimpleStaxParser {
         	
     }
 
-    private void createNode(String title, String wikiId) {
-        Map<String, Object> properties = MapUtil.map(WikiNodeProperty.wikiid.name(), wikiId, WikiNodeProperty.title.name(), title, WikiNodeProperty.lang.name(), langCode);
+    private void createNode(String title, String text, String wikiId) {
+        Map<String, Object> properties = MapUtil.map(WikiNodeProperty.wikiid.name(), wikiId, WikiNodeProperty.text.name(), text, WikiNodeProperty.title.name(), title, WikiNodeProperty.lang.name(), langCode);
         boolean isCategory = title.startsWith(WikipediaNamespace.getCategoryName(langCode)+":");
         WikiLabel label = null;
         if (isCategory) {
