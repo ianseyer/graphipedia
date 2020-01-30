@@ -87,7 +87,11 @@ public class LinkExtractor extends SimpleStaxParser {
         writer.writeStartElement("t");
         writer.writeCharacters(title);
         writer.writeEndElement();
-        
+       
+        writer.writeStartElement("text");
+        writer.writeCharacters(text);
+        writer.writeEndElement();
+
         writer.writeStartElement("i");
         writer.writeCharacters(id);
         writer.writeEndElement();

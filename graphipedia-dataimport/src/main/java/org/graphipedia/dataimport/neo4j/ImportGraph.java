@@ -96,6 +96,7 @@ public class ImportGraph {
 		System.out.println("Importing pages...");
 		NodeCreator nodeCreator = new NodeCreator(inserter, inMemoryIndex, langCode);
 		long startTime = System.currentTimeMillis();
+        System.out.println(fileName);
 		nodeCreator.parse(fileName);
 		long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
 		System.out.printf("\n%d pages and %d categories imported in %d seconds.\n", nodeCreator.getNumberOfPages(),
