@@ -58,7 +58,6 @@ public class LinkExtractor extends SimpleStaxParser {
     }
 
 
-    @Override
     protected void createNode(String title, String text, ArrayList<String> categories, String id) {
         String nothing;
     }

@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
@@ -48,8 +47,6 @@ public abstract class SimpleStaxParser {
 
     protected abstract void handleElement(String element, String value);
 
-    protected abstract void createNode(String title, String text, ArrayList<String> categories, String id);
-
     public void parse(String fileName) throws IOException, XMLStreamException {
         if (STDIN_FILENAME.equals(fileName)) {
             parse(System.in);
@@ -71,7 +68,7 @@ public abstract class SimpleStaxParser {
     private void parseElements(XMLStreamReader reader) throws XMLStreamException {
         LinkedList<String> elementStack = new LinkedList<String>();
         StringBuilder textBuffer = new StringBuilder();
-
+        
         while (reader.hasNext()) {
             switch (reader.next()) {
             case XMLEvent.START_ELEMENT:
@@ -82,67 +79,6 @@ public abstract class SimpleStaxParser {
                 String element = elementStack.pop();
                 if (isInteresting(element)) {
                     handleElement(element, textBuffer.toString().trim());
-                }
-                break;
-            case XMLEvent.CHARACTERS:
-                if (isInteresting(elementStack.peek())) {
-                    textBuffer.append(reader.getText());
-                }
-                break;
-            }
-        }
-    }
-
-    public void parseMulti(String fileName) throws IOException, XMLStreamException {
-        if (STDIN_FILENAME.equals(fileName)) {
-            parseMulti(System.in);
-        } else {
-            parseMulti(new FileInputStream(fileName));
-        }
-    }
-
-    private void parseMulti(InputStream inputStream) throws IOException, XMLStreamException {
-        XMLStreamReader reader = XML_INPUT_FACTORY.createXMLStreamReader(inputStream, "UTF-8");
-        try {
-            parseMultiElements(reader);
-        } finally {
-            reader.close();
-            inputStream.close();
-        }
-    }
-
-    private void parseMultiElements(XMLStreamReader reader) throws XMLStreamException {
-        LinkedList<String> elementStack = new LinkedList<String>();
-        StringBuilder textBuffer = new StringBuilder();
-        String title = new String();
-        String text = new String();
-        String id = new String();
-        ArrayList<String> categories = new ArrayList<String>();
-        while (reader.hasNext()) {
-            switch (reader.next()) {
-            case XMLEvent.START_ELEMENT:
-                elementStack.push(reader.getName().getLocalPart());
-                String element = elementStack.peek();
-                if ("page".equals(element)) {
-                  createNode(title, text, categories, id);
-                  title = ""; text = ""; id = "";
-                  categories = new ArrayList<String>();
-                }
-                textBuffer.setLength(0);
-                break;
-            case XMLEvent.END_ELEMENT:
-                element = elementStack.pop();
-                if (isInteresting(element)) {
-                    String value = textBuffer.toString().trim();
-                    if ("title".equals(element)) {
-                      title = value;
-                    } else if ("category".equals(element)) {
-                      categories.add(value);
-                    } else if ("text".equals(element)) {
-                      text = value;
-                    } else if ("id".equals(element)) {
-                      id = value;
-                    }
                 }
                 break;
             case XMLEvent.CHARACTERS:

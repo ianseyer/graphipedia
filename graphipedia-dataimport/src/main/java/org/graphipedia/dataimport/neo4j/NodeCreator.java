@@ -40,6 +40,7 @@ public class NodeCreator extends SimpleStaxParser {
     
     private String title;
     private String wikiId;
+    private String text;
 
     private final ProgressCounter pageCounter = new ProgressCounter();
     private int numberOfCategories;
@@ -54,6 +55,7 @@ public class NodeCreator extends SimpleStaxParser {
         this.numberOfPages = 0;
         title = null;
         wikiId = null;
+        text = null;
     }
 
     public int getPageCount() {
@@ -70,17 +72,18 @@ public class NodeCreator extends SimpleStaxParser {
 
     @Override
     protected void handleElement(String element, String value) {
-<<<<<<< HEAD
         if ("p".equals(element)) {
-            createNode(title, wikiId);
+            createNode(title, text, wikiId);
             title = null;
             wikiId = null;
+            text = null;
         } else if ("t".equals(element)) {
         	title = value;
         } else if ("i".equals(element)) {
         	wikiId = value;
+        } else if ("text".equals(element)) {
+            text = value;
         }
-        	
     }
 
     private void createNode(String title, String text, String wikiId) {
