@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +33,7 @@ public class CrossLinkExtractor {
 		this.bw = bw;
 		this.sourceLang = sourceLang;
 		this.targetLangs = targetLangs;
-		this.graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(new File(neo4jdb));
+		this.graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(neo4jdb);
 		registerShutdownHook(graphDb);
 	}
 
@@ -82,11 +81,11 @@ public class CrossLinkExtractor {
 	}
 
 	private long getNodeIdByWikiId(String wikiId, String lang) {
-		ResourceIterator<Node> pages = graphDb.findNodes(WikiLabel.Page, WikiNodeProperty.wikiid.name(), wikiId);
+		ResourceIterator<Node> pages = graphDb.findNodesByLabelAndProperty(WikiLabel.Page, WikiNodeProperty.wikiid.name(), wikiId).iterator();
 		if(pages.hasNext())
 			return pages.next().getId();
 		
-		ResourceIterator<Node> categories = graphDb.findNodes(WikiLabel.Category, WikiNodeProperty.wikiid.name(), wikiId);
+		ResourceIterator<Node> categories = graphDb.findNodesByLabelAndProperty(WikiLabel.Category, WikiNodeProperty.wikiid.name(), wikiId).iterator();
 		if (categories.hasNext())
 			return categories.next().getId();
 		
@@ -94,11 +93,11 @@ public class CrossLinkExtractor {
 	}
 
 	private long getNodeIdByTitle(String title, String lang) { 
-		ResourceIterator<Node> pages = graphDb.findNodes(WikiLabel.Page, WikiNodeProperty.title.name(), title);
+		ResourceIterator<Node> pages = graphDb.findNodesByLabelAndProperty(WikiLabel.Page, WikiNodeProperty.title.name(), title).iterator();
 		if(pages.hasNext())
 			return pages.next().getId();
 		
-		ResourceIterator<Node> categories = graphDb.findNodes(WikiLabel.Category, WikiNodeProperty.title.name(), title);
+		ResourceIterator<Node> categories = graphDb.findNodesByLabelAndProperty(WikiLabel.Category, WikiNodeProperty.title.name(), title).iterator();
 		if (categories.hasNext())
 			return categories.next().getId();
 		

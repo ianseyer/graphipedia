@@ -12,7 +12,7 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <neo4j.version>3.0.4</neo4j.version>
+    <neo4j.version>2.1.5</neo4j.version>
   </properties>
 
   <modules>
@@ -44,13 +44,8 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.12</version>
+        <version>4.10</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.lucene</groupId>
-        <artifactId>lucene-backward-codecs</artifactId>
-        <version>5.5.0</version>
-      </dependency> 
     </dependencies>
   </dependencyManagement>
 

@@ -1,7 +1,6 @@
 package org.graphipedia.dataimport.neo4j;
 
 import java.io.IOException;
-import java.io.File;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
 
@@ -10,9 +9,9 @@ public class ImportCrossLinks {
 	private BatchInserter inserter;
 	private String inputFile;
 	
-	public ImportCrossLinks(String inputFile, String neo4jdb) throws IOException {
+	public ImportCrossLinks(String inputFile, String neo4jdb) {
 		this.inputFile = inputFile;
-		inserter = BatchInserters.inserter(new File(neo4jdb));
+		inserter = BatchInserters.inserter(neo4jdb);
 	}
 
 	public static void main(String[] args) throws IOException {
