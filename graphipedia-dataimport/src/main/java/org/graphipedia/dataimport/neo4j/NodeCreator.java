@@ -44,7 +44,7 @@ public class NodeCreator extends SimpleStaxParser {
     private int numberOfPages; 
 
     public NodeCreator(BatchInserter inserter, Map<String, Long> inMemoryIndex, String langCode) {
-        super(Arrays.asList("p", "t", "text", "i"));
+        super(Arrays.asList("p", "t", "full_text", "i"));
         this.inserter = inserter;
         this.inMemoryIndex = inMemoryIndex;
         this.langCode = langCode;
@@ -78,7 +78,7 @@ public class NodeCreator extends SimpleStaxParser {
         	title = value;
         } else if ("i".equals(element)) {
         	wikiId = value;
-        } else if ("text".equals(element)) {
+        } else if ("full_text".equals(element)) {
             text = value;
         }
         	
